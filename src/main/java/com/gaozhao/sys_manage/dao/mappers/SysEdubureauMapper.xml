@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gaozhao.sys_manage.dao.SysEdubureauDao">
+    <!-- SysEdubureau的resultMap,column是给数据库列起的别名,它对应property类的属性-->
+    <resultMap id="result_SysEdubureau_Map" type="com.gaozhao.sys_manage.pojo.domain.SysEdubureau">
+        <id column="id" property="id" />
+        <result column="edu_code" property="eduCode" />
+        <result column="valid_start_time" property="validStartTime" />
+        <result column="create_time" property="createTime" />
+        <result column="city_code" property="cityCode" />
+        <result column="del_status" property="delStatus" />
+        <result column="province_code" property="provinceCode" />
+        <result column="edu_name" property="eduName" />
+        <result column="update_time" property="updateTime" />
+        <result column="district_code" property="districtCode" />
+        <result column="valid_end_time" property="validEndTime" />
+        <result column="tel" property="tel" />
+        <result column="fk_code" property="fkCode" />
+    </resultMap>
+
+	   <!-- Assist用于辅助工具类setRequires设置的条件,${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+    <sql id="Assist">
+        <where>
+            <foreach collection="require" item="req" separator=" ">
+                ${req.require} 
+                <if test="req.value != null"> #{req.value}</if> 
+                <if test="req.values != null">
+                    <foreach collection="req.values" item="val" separator=","> 
+                        #{val} 
+                    </foreach> 
+                </if> 
+                <if test="req.suffix != null"> ${req.suffix}</if> 
+            </foreach>
+        </where>
+    </sql>
+
+	   <!-- updateAssist用于更新数据的使用它拓展自Assist,用于辅助工具类setRequires设置的条件,${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+    <sql id="updateAssist">
+        <where>
+            <foreach collection="assist.require" item="req" separator=" ">
+                ${req.require} 
+                <if test="req.value != null"> #{req.value}</if> 
+                <if test="req.values != null">
+                    <foreach collection="req.values" item="val" separator=","> 
+                        #{val} 
+                    </foreach> 
+                </if> 
+                <if test="req.suffix != null"> ${req.suffix}</if> 
+            </foreach>
+        </where>
+    </sql>
+
+    <!-- 数据库中表名为:sys_edubureau的列名,as前是数据库的列明,as后是列的别名用于映射成实体类中的属性,需要注意的是别名必须与resultMap中的column别名一致 -->
+    <sql id="sys_edubureau_Column">
+        sys_edubureau.id as id
+        ,sys_edubureau.edu_code as edu_code
+        ,sys_edubureau.valid_start_time as valid_start_time
+        ,sys_edubureau.create_time as create_time
+        ,sys_edubureau.city_code as city_code
+        ,sys_edubureau.del_status as del_status
+        ,sys_edubureau.province_code as province_code
+        ,sys_edubureau.edu_name as edu_name
+        ,sys_edubureau.update_time as update_time
+        ,sys_edubureau.district_code as district_code
+        ,sys_edubureau.valid_end_time as valid_end_time
+        ,sys_edubureau.tel as tel
+        ,sys_edubureau.fk_code as fk_code
+    </sql>
+
+    <!--获得类名为:SysEdubureau对应的数据库表的数据总行数 -->
+    <select id="getSysEdubureauRowCount" parameterType="com.gaozhao.app_common.util.Assist" resultType="java.lang.Long">
+        select count(id) from sys_edubureau
+        <if test="require!=null"><include refid="Assist" /></if>
+    </select>
+    <!-- 获得类名为:SysEdubureau对应数据库中表的数据集合 -->
+    <select id="selectSysEdubureau" parameterType="com.gaozhao.app_common.util.Assist"  resultMap="result_SysEdubureau_Map">
+        select  <if test="distinct !=null">${distinct}</if>
+        <choose>
+            <when test="resultColumn!=null">${resultColumn}</when>
+            <otherwise>
+        <include refid="sys_edubureau_Column" /> 
+            </otherwise>
+        </choose>
+        from sys_edubureau
+        <choose>
+            <when test="rowSize ==null">
+                <if test="require!=null">
+                    <include refid="Assist" />
+                </if>
+                <if test="order !=null">${order}</if>
+            </when>
+            <otherwise>
+                inner join
+                (
+                SELECT id as primary_key FROM sys_edubureau
+                <if test="require!=null">
+                    <include refid="Assist" />
+                </if>
+                <if test="order !=null">${order}</if>
+                <choose>
+                    <when test="startRow !=null and rowSize !=null">LIMIT #{startRow},#{rowSize} </when>
+                    <when test="rowSize !=null">LIMIT #{rowSize}</when>
+                 </choose>
+                 ) as tmp
+                 on tmp.primary_key=sys_edubureau.id
+            </otherwise>
+        </choose>
+    </select> 
+
+    <!-- 获得一个SysEdubureau对象,以参数SysEdubureau对象中不为空的属性作为条件进行查询-->
+    <select id="selectSysEdubureauByObj" parameterType="com.gaozhao.sys_manage.pojo.domain.SysEdubureau" resultMap="result_SysEdubureau_Map">
+        select 
+            <include refid="sys_edubureau_Column" /> 
+        from sys_edubureau
+        <where>
+            <if test="fkCode != null "> and sys_edubureau.fk_code = #{fkCode}</if>
+            <if test="tel != null "> and sys_edubureau.tel = #{tel}</if>
+            <if test="validEndTime != null "> and sys_edubureau.valid_end_time = #{validEndTime}</if>
+            <if test="districtCode != null "> and sys_edubureau.district_code = #{districtCode}</if>
+            <if test="updateTime != null "> and sys_edubureau.update_time = #{updateTime}</if>
+            <if test="eduName != null "> and sys_edubureau.edu_name = #{eduName}</if>
+            <if test="provinceCode != null "> and sys_edubureau.province_code = #{provinceCode}</if>
+            <if test="delStatus != null "> and sys_edubureau.del_status = #{delStatus}</if>
+            <if test="cityCode != null "> and sys_edubureau.city_code = #{cityCode}</if>
+            <if test="createTime != null "> and sys_edubureau.create_time = #{createTime}</if>
+            <if test="validStartTime != null "> and sys_edubureau.valid_start_time = #{validStartTime}</if>
+            <if test="eduCode != null "> and sys_edubureau.edu_code = #{eduCode}</if>
+            <if test="id != null "> and sys_edubureau.id = #{id}</if>
+        </where>
+    </select> 
+
+    <!-- 通过SysEdubureau的id获得对应数据库中表的数据对象-->
+    <select id="selectSysEdubureauById" parameterType="java.lang.Long" resultMap="result_SysEdubureau_Map">
+        select 
+            <include refid="sys_edubureau_Column" /> 
+        from sys_edubureau
+        where sys_edubureau.id = #{id}
+    </select> 
+
+    <!-- 将SysEdubureau插入到对应数据库的表中,包括属性值为null的数据-->
+
+    <insert id="insertSysEdubureau" parameterType="com.gaozhao.sys_manage.pojo.domain.SysEdubureau">
+        insert into sys_edubureau(id,edu_code,valid_start_time,create_time,city_code,del_status,province_code,edu_name,update_time,district_code,valid_end_time,tel,fk_code) 
+        values(#{id},#{eduCode},#{validStartTime},#{createTime},#{cityCode},#{delStatus},#{provinceCode},#{eduName},#{updateTime},#{districtCode},#{validEndTime},#{tel},#{fkCode})
+    </insert>
+
+    <!-- 将SysEdubureau中属性值不为null的数据,插入到对应数据库的表中-->
+    <insert id="insertNonEmptySysEdubureau" parameterType="com.gaozhao.sys_manage.pojo.domain.SysEdubureau">
+        insert into sys_edubureau
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="eduCode != null">edu_code,</if>
+            <if test="validStartTime != null">valid_start_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="cityCode != null">city_code,</if>
+            <if test="delStatus != null">del_status,</if>
+            <if test="provinceCode != null">province_code,</if>
+            <if test="eduName != null">edu_name,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="districtCode != null">district_code,</if>
+            <if test="validEndTime != null">valid_end_time,</if>
+            <if test="tel != null">tel,</if>
+            <if test="fkCode != null">fk_code,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null"> #{id},</if>
+            <if test="eduCode != null"> #{eduCode},</if>
+            <if test="validStartTime != null"> #{validStartTime},</if>
+            <if test="createTime != null"> #{createTime},</if>
+            <if test="cityCode != null"> #{cityCode},</if>
+            <if test="delStatus != null"> #{delStatus},</if>
+            <if test="provinceCode != null"> #{provinceCode},</if>
+            <if test="eduName != null"> #{eduName},</if>
+            <if test="updateTime != null"> #{updateTime},</if>
+            <if test="districtCode != null"> #{districtCode},</if>
+            <if test="validEndTime != null"> #{validEndTime},</if>
+            <if test="tel != null"> #{tel},</if>
+            <if test="fkCode != null"> #{fkCode},</if>
+        </trim>
+    </insert>
+
+    <!-- 将SysEdubureau批量插入到对应数据库的表中-->
+    <insert id="insertSysEdubureauByBatch" parameterType="ArrayList">
+        insert into sys_edubureau(id,edu_code,valid_start_time,create_time,city_code,del_status,province_code,edu_name,update_time,district_code,valid_end_time,tel,fk_code) values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.id},#{item.eduCode},#{item.validStartTime},#{item.createTime},#{item.cityCode},#{item.delStatus},#{item.provinceCode},#{item.eduName},#{item.updateTime},#{item.districtCode},#{item.validEndTime},#{item.tel},#{item.fkCode})
+        </foreach>
+    </insert>
+
+    <!-- 通过SysEdubureau的id将数据库表中对应的数据删除-->
+    <delete id="deleteSysEdubureauById" parameterType="java.lang.Long">
+        delete from sys_edubureau
+        where id = #{id}
+    </delete>
+
+    <!-- 通过辅助工具Assist中的条件将SysEdubureau对应的数据库表的数据删除-->
+    <delete id="deleteSysEdubureau" parameterType="com.gaozhao.app_common.util.Assist">
+        delete from sys_edubureau
+        <if test="require!=null"><include refid="Assist" /></if>
+    </delete>
+
+    <!-- 通过SysEdubureau的id将SysEdubureau的数据更新到数据库中对应的表,包括值null的数据-->
+    <update id="updateSysEdubureauById" parameterType="com.gaozhao.sys_manage.pojo.domain.SysEdubureau">
+        update sys_edubureau set
+            edu_code=#{eduCode}
+            ,valid_start_time=#{validStartTime}
+            ,create_time=#{createTime}
+            ,city_code=#{cityCode}
+            ,del_status=#{delStatus}
+            ,province_code=#{provinceCode}
+            ,edu_name=#{eduName}
+            ,update_time=#{updateTime}
+            ,district_code=#{districtCode}
+            ,valid_end_time=#{validEndTime}
+            ,tel=#{tel}
+            ,fk_code=#{fkCode}
+        where id=#{id}
+    </update>
+
+    <!-- 通过SysEdubureau的id将SysEdubureau中属性值不为null的数据更新到数据库对应的表中-->
+    <update id="updateNonEmptySysEdubureauById" parameterType="com.gaozhao.sys_manage.pojo.domain.SysEdubureau">
+        update sys_edubureau
+        <set>
+            <if test="eduCode != null">
+                edu_code=#{eduCode},
+            </if>
+            <if test="validStartTime != null">
+                valid_start_time=#{validStartTime},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime},
+            </if>
+            <if test="cityCode != null">
+                city_code=#{cityCode},
+            </if>
+            <if test="delStatus != null">
+                del_status=#{delStatus},
+            </if>
+            <if test="provinceCode != null">
+                province_code=#{provinceCode},
+            </if>
+            <if test="eduName != null">
+                edu_name=#{eduName},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+            <if test="districtCode != null">
+                district_code=#{districtCode},
+            </if>
+            <if test="validEndTime != null">
+                valid_end_time=#{validEndTime},
+            </if>
+            <if test="tel != null">
+                tel=#{tel},
+            </if>
+            <if test="fkCode != null">
+                fk_code=#{fkCode},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 通过辅助工具Assist中的条件将SysEdubureau中的数据更新到数据库对应的表中,包括值为null的数据-->
+    <update id="updateSysEdubureau" parameterType="map">
+        update sys_edubureau
+        <set>
+                id=#{enti.id},
+                edu_code=#{enti.eduCode},
+                valid_start_time=#{enti.validStartTime},
+                create_time=#{enti.createTime},
+                city_code=#{enti.cityCode},
+                del_status=#{enti.delStatus},
+                province_code=#{enti.provinceCode},
+                edu_name=#{enti.eduName},
+                update_time=#{enti.updateTime},
+                district_code=#{enti.districtCode},
+                valid_end_time=#{enti.validEndTime},
+                tel=#{enti.tel},
+                fk_code=#{enti.fkCode},
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <!-- 通过辅助工具Assist中的条件将SysEdubureau中属性值不为null的数据更新到数据库对应的表中-->
+    <update id="updateNonEmptySysEdubureau" parameterType="map">
+        update sys_edubureau
+        <set>
+            <if test="enti.id != null">
+                id=#{enti.id},
+            </if>
+            <if test="enti.eduCode != null">
+                edu_code=#{enti.eduCode},
+            </if>
+            <if test="enti.validStartTime != null">
+                valid_start_time=#{enti.validStartTime},
+            </if>
+            <if test="enti.createTime != null">
+                create_time=#{enti.createTime},
+            </if>
+            <if test="enti.cityCode != null">
+                city_code=#{enti.cityCode},
+            </if>
+            <if test="enti.delStatus != null">
+                del_status=#{enti.delStatus},
+            </if>
+            <if test="enti.provinceCode != null">
+                province_code=#{enti.provinceCode},
+            </if>
+            <if test="enti.eduName != null">
+                edu_name=#{enti.eduName},
+            </if>
+            <if test="enti.updateTime != null">
+                update_time=#{enti.updateTime},
+            </if>
+            <if test="enti.districtCode != null">
+                district_code=#{enti.districtCode},
+            </if>
+            <if test="enti.validEndTime != null">
+                valid_end_time=#{enti.validEndTime},
+            </if>
+            <if test="enti.tel != null">
+                tel=#{enti.tel},
+            </if>
+            <if test="enti.fkCode != null">
+                fk_code=#{enti.fkCode},
+            </if>
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <!--查询列表总数 -->
+    <select id="getSysEduBureauListCount" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM
+        `sys_edubureau` seb
+        WHERE seb.`DEL_STATUS` = 0
+        <if test="provinceCode!=null and provinceCode!=''">AND seb.PROVINCE_NAME = #{provinceCode}</if>
+        <if test="cityCode!=null and cityCode!=''">AND seb.CITY_CODE = #{cityCode}</if>
+        <if test="districtCode!=null and districtCode!=''">AND seb.DISTRICT_CODE = #{districtName}</if>
+        <if test="eduName!=null and eduName!=''">AND seb.EDU_NAME LIKE '%${eduName}%'</if>
+        <if test="eduCode!=null and eduCode!=''">AND seb.EDU_CODE LIKE '%${eduCode}%'</if>
+        <if test="state!=null">AND ${state}</if>
+
+    </select>
+
+
+    <!--查询所有教育局列表(条件查询,省市区,状态,名字,编码) -->
+    <select id="getSysEduBureauList" resultMap="result_SysEdubureau_Map">
+        SELECT
+        id,fk_code,edu_name,province_code,city_code,district_code,edu_code,tel,valid_end_time,valid_start_time
+        FROM
+        `sys_edubureau` seb
+        WHERE
+        seb.`DEL_STATUS` = 0
+        <if test="provinceCode!=null and provinceCode!=''">AND seb.PROVINCE_CODE = #{provinceCode}</if>
+        <if test="cityCode!=null and cityCode!=''">AND seb.CITY_CODE = #{cityCode}</if>
+        <if test="districtCode!=null and districtCode!=''">AND seb.DISTRICT_CODE = #{districtCode}</if>
+        <if test="eduName!=null and eduName!=''">AND seb.EDU_NAME LIKE '%${eduName}%'</if>
+        <if test="eduCode!=null and eduCode!=''">AND seb.EDU_CODE LIKE '%${eduCode}%'</if>
+        <if test="state!=null">AND ${state}</if>
+        ORDER BY seb.`CREATE_TIME` DESC
+        limit
+        #{pageNo},#{pageSize}
+    </select>
+
+
+</mapper>

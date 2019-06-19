@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gaozhao.sys_manage.dao.SysSchoolinforDao">
+    <!-- SysSchoolinfor的resultMap,column是给数据库列起的别名,它对应property类的属性-->
+    <resultMap id="result_SysSchoolinfor_Map" type="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor">
+        <id column="id" property="id" />
+        <result column="fkCode" property="fkCode" />
+        <result column="setup_time" property="setupTime" />
+        <result column="school_english_ame" property="schoolEnglishAme" />
+        <result column="valid_start_time" property="validStartTime" />
+        <result column="school_area" property="schoolArea" />
+        <result column="create_time" property="createTime" />
+        <result column="school_profile" property="schoolProfile" />
+        <result column="school_name" property="schoolName" />
+        <result column="city_code" property="cityCode" />
+        <result column="edu_bureau_fkcode" property="eduBureauFkcode" />
+        <result column="del_status" property="delStatus" />
+        <result column="school_image" property="schoolImage" />
+        <result column="province_code" property="provinceCode" />
+        <result column="school_latlng" property="schoolLatlng" />
+        <result column="update_time" property="updateTime" />
+        <result column="district_code" property="districtCode" />
+        <result column="school_address" property="schoolAddress" />
+        <result column="school_motto" property="schoolMotto" />
+        <result column="school_fax" property="schoolFax" />
+        <result column="valid_end_time" property="validEndTime" />
+        <result column="school_tel" property="schoolTel" />
+        <result column="school_postcode" property="schoolPostcode" />
+        <result column="school_nature" property="schoolNature" />
+    </resultMap>
+
+	   <!-- Assist用于辅助工具类setRequires设置的条件,${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+    <sql id="Assist">
+        <where>
+            <foreach collection="require" item="req" separator=" ">
+                ${req.require} 
+                <if test="req.value != null"> #{req.value}</if> 
+                <if test="req.values != null">
+                    <foreach collection="req.values" item="val" separator=","> 
+                        #{val} 
+                    </foreach> 
+                </if> 
+                <if test="req.suffix != null"> ${req.suffix}</if> 
+            </foreach>
+        </where>
+    </sql>
+
+	   <!-- updateAssist用于更新数据的使用它拓展自Assist,用于辅助工具类setRequires设置的条件,${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+    <sql id="updateAssist">
+        <where>
+            <foreach collection="assist.require" item="req" separator=" ">
+                ${req.require} 
+                <if test="req.value != null"> #{req.value}</if> 
+                <if test="req.values != null">
+                    <foreach collection="req.values" item="val" separator=","> 
+                        #{val} 
+                    </foreach> 
+                </if> 
+                <if test="req.suffix != null"> ${req.suffix}</if> 
+            </foreach>
+        </where>
+    </sql>
+
+    <!-- 数据库中表名为:sys_schoolinfor的列名,as前是数据库的列明,as后是列的别名用于映射成实体类中的属性,需要注意的是别名必须与resultMap中的column别名一致 -->
+    <sql id="sys_schoolinfor_Column">
+        sys_schoolinfor.id as id
+        ,sys_schoolinfor.fkCode as fkCode
+        ,sys_schoolinfor.setup_time as setup_time
+        ,sys_schoolinfor.school_english_ame as school_english_ame
+        ,sys_schoolinfor.valid_start_time as valid_start_time
+        ,sys_schoolinfor.school_area as school_area
+        ,sys_schoolinfor.create_time as create_time
+        ,sys_schoolinfor.school_profile as school_profile
+        ,sys_schoolinfor.school_name as school_name
+        ,sys_schoolinfor.city_code as city_code
+        ,sys_schoolinfor.edu_bureau_fkcode as edu_bureau_fkcode
+        ,sys_schoolinfor.del_status as del_status
+        ,sys_schoolinfor.school_image as school_image
+        ,sys_schoolinfor.province_code as province_code
+        ,sys_schoolinfor.school_latlng as school_latlng
+        ,sys_schoolinfor.update_time as update_time
+        ,sys_schoolinfor.district_code as district_code
+        ,sys_schoolinfor.school_address as school_address
+        ,sys_schoolinfor.school_motto as school_motto
+        ,sys_schoolinfor.school_fax as school_fax
+        ,sys_schoolinfor.valid_end_time as valid_end_time
+        ,sys_schoolinfor.school_tel as school_tel
+        ,sys_schoolinfor.school_postcode as school_postcode
+        ,sys_schoolinfor.school_nature as school_nature
+    </sql>
+
+    <!--获得类名为:SysSchoolinfor对应的数据库表的数据总行数 -->
+    <select id="getSysSchoolinforRowCount" parameterType="com.gaozhao.app_common.util.Assist" resultType="java.lang.Long">
+        select count(id) from sys_schoolinfor
+        <if test="require!=null"><include refid="Assist" /></if>
+    </select>
+    <!-- 获得类名为:SysSchoolinfor对应数据库中表的数据集合 -->
+    <select id="selectSysSchoolinfor" parameterType="com.gaozhao.app_common.util.Assist"  resultMap="result_SysSchoolinfor_Map">
+        select  <if test="distinct !=null">${distinct}</if>
+        <choose>
+            <when test="resultColumn!=null">${resultColumn}</when>
+            <otherwise>
+        <include refid="sys_schoolinfor_Column" /> 
+            </otherwise>
+        </choose>
+        from sys_schoolinfor
+        <choose>
+            <when test="rowSize ==null">
+                <if test="require!=null">
+                    <include refid="Assist" />
+                </if>
+                <if test="order !=null">${order}</if>
+            </when>
+            <otherwise>
+                inner join
+                (
+                SELECT id as primary_key FROM sys_schoolinfor
+                <if test="require!=null">
+                    <include refid="Assist" />
+                </if>
+                <if test="order !=null">${order}</if>
+                <choose>
+                    <when test="startRow !=null and rowSize !=null">LIMIT #{startRow},#{rowSize} </when>
+                    <when test="rowSize !=null">LIMIT #{rowSize}</when>
+                 </choose>
+                 ) as tmp
+                 on tmp.primary_key=sys_schoolinfor.id
+            </otherwise>
+        </choose>
+    </select> 
+
+    <!-- 获得一个SysSchoolinfor对象,以参数SysSchoolinfor对象中不为空的属性作为条件进行查询-->
+    <select id="selectSysSchoolinforByObj" parameterType="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor" resultMap="result_SysSchoolinfor_Map">
+        select 
+            <include refid="sys_schoolinfor_Column" /> 
+        from sys_schoolinfor
+        <where>
+            <if test="schoolNature != null "> and sys_schoolinfor.school_nature = #{schoolNature}</if>
+            <if test="schoolPostcode != null "> and sys_schoolinfor.school_postcode = #{schoolPostcode}</if>
+            <if test="schoolTel != null "> and sys_schoolinfor.school_tel = #{schoolTel}</if>
+            <if test="validEndTime != null "> and sys_schoolinfor.valid_end_time = #{validEndTime}</if>
+            <if test="schoolFax != null "> and sys_schoolinfor.school_fax = #{schoolFax}</if>
+            <if test="schoolMotto != null "> and sys_schoolinfor.school_motto = #{schoolMotto}</if>
+            <if test="schoolAddress != null "> and sys_schoolinfor.school_address = #{schoolAddress}</if>
+            <if test="districtCode != null "> and sys_schoolinfor.district_code = #{districtCode}</if>
+            <if test="updateTime != null "> and sys_schoolinfor.update_time = #{updateTime}</if>
+            <if test="schoolLatlng != null "> and sys_schoolinfor.school_latlng = #{schoolLatlng}</if>
+            <if test="provinceCode != null "> and sys_schoolinfor.province_code = #{provinceCode}</if>
+            <if test="schoolImage != null "> and sys_schoolinfor.school_image = #{schoolImage}</if>
+            <if test="delStatus != null "> and sys_schoolinfor.del_status = #{delStatus}</if>
+            <if test="eduBureauFkcode != null "> and sys_schoolinfor.edu_bureau_fkcode = #{eduBureauFkcode}</if>
+            <if test="cityCode != null "> and sys_schoolinfor.city_code = #{cityCode}</if>
+            <if test="schoolName != null "> and sys_schoolinfor.school_name = #{schoolName}</if>
+            <if test="schoolProfile != null "> and sys_schoolinfor.school_profile = #{schoolProfile}</if>
+            <if test="createTime != null "> and sys_schoolinfor.create_time = #{createTime}</if>
+            <if test="schoolArea != null "> and sys_schoolinfor.school_area = #{schoolArea}</if>
+            <if test="validStartTime != null "> and sys_schoolinfor.valid_start_time = #{validStartTime}</if>
+            <if test="schoolEnglishAme != null "> and sys_schoolinfor.school_english_ame = #{schoolEnglishAme}</if>
+            <if test="setupTime != null "> and sys_schoolinfor.setup_time = #{setupTime}</if>
+            <if test="fkCode != null "> and sys_schoolinfor.fkCode = #{fkCode}</if>
+            <if test="id != null "> and sys_schoolinfor.id = #{id}</if>
+        </where>
+    </select> 
+
+    <!-- 通过SysSchoolinfor的id获得对应数据库中表的数据对象-->
+    <select id="selectSysSchoolinforById" parameterType="java.lang.Long" resultMap="result_SysSchoolinfor_Map">
+        select 
+            <include refid="sys_schoolinfor_Column" /> 
+        from sys_schoolinfor
+        where sys_schoolinfor.id = #{id}
+    </select> 
+
+    <!-- 将SysSchoolinfor插入到对应数据库的表中,包括属性值为null的数据-->
+
+    <insert id="insertSysSchoolinfor" parameterType="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor">
+        insert into sys_schoolinfor(id,fkCode,setup_time,school_english_ame,valid_start_time,school_area,create_time,school_profile,school_name,city_code,edu_bureau_fkcode,del_status,school_image,province_code,school_latlng,update_time,district_code,school_address,school_motto,school_fax,valid_end_time,school_tel,school_postcode,school_nature) 
+        values(#{id},#{fkCode},#{setupTime},#{schoolEnglishAme},#{validStartTime},#{schoolArea},#{createTime},#{schoolProfile},#{schoolName},#{cityCode},#{eduBureauFkcode},#{delStatus},#{schoolImage},#{provinceCode},#{schoolLatlng},#{updateTime},#{districtCode},#{schoolAddress},#{schoolMotto},#{schoolFax},#{validEndTime},#{schoolTel},#{schoolPostcode},#{schoolNature})
+    </insert>
+
+    <!-- 将SysSchoolinfor中属性值不为null的数据,插入到对应数据库的表中-->
+    <insert id="insertNonEmptySysSchoolinfor" parameterType="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor">
+        insert into sys_schoolinfor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="fkCode != null">fkCode,</if>
+            <if test="setupTime != null">setup_time,</if>
+            <if test="schoolEnglishAme != null">school_english_ame,</if>
+            <if test="validStartTime != null">valid_start_time,</if>
+            <if test="schoolArea != null">school_area,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="schoolProfile != null">school_profile,</if>
+            <if test="schoolName != null">school_name,</if>
+            <if test="cityCode != null">city_code,</if>
+            <if test="eduBureauFkcode != null">edu_bureau_fkcode,</if>
+            <if test="delStatus != null">del_status,</if>
+            <if test="schoolImage != null">school_image,</if>
+            <if test="provinceCode != null">province_code,</if>
+            <if test="schoolLatlng != null">school_latlng,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="districtCode != null">district_code,</if>
+            <if test="schoolAddress != null">school_address,</if>
+            <if test="schoolMotto != null">school_motto,</if>
+            <if test="schoolFax != null">school_fax,</if>
+            <if test="validEndTime != null">valid_end_time,</if>
+            <if test="schoolTel != null">school_tel,</if>
+            <if test="schoolPostcode != null">school_postcode,</if>
+            <if test="schoolNature != null">school_nature,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null"> #{id},</if>
+            <if test="fkCode != null"> #{fkCode},</if>
+            <if test="setupTime != null"> #{setupTime},</if>
+            <if test="schoolEnglishAme != null"> #{schoolEnglishAme},</if>
+            <if test="validStartTime != null"> #{validStartTime},</if>
+            <if test="schoolArea != null"> #{schoolArea},</if>
+            <if test="createTime != null"> #{createTime},</if>
+            <if test="schoolProfile != null"> #{schoolProfile},</if>
+            <if test="schoolName != null"> #{schoolName},</if>
+            <if test="cityCode != null"> #{cityCode},</if>
+            <if test="eduBureauFkcode != null"> #{eduBureauFkcode},</if>
+            <if test="delStatus != null"> #{delStatus},</if>
+            <if test="schoolImage != null"> #{schoolImage},</if>
+            <if test="provinceCode != null"> #{provinceCode},</if>
+            <if test="schoolLatlng != null"> #{schoolLatlng},</if>
+            <if test="updateTime != null"> #{updateTime},</if>
+            <if test="districtCode != null"> #{districtCode},</if>
+            <if test="schoolAddress != null"> #{schoolAddress},</if>
+            <if test="schoolMotto != null"> #{schoolMotto},</if>
+            <if test="schoolFax != null"> #{schoolFax},</if>
+            <if test="validEndTime != null"> #{validEndTime},</if>
+            <if test="schoolTel != null"> #{schoolTel},</if>
+            <if test="schoolPostcode != null"> #{schoolPostcode},</if>
+            <if test="schoolNature != null"> #{schoolNature},</if>
+        </trim>
+    </insert>
+
+    <!-- 将SysSchoolinfor批量插入到对应数据库的表中-->
+    <insert id="insertSysSchoolinforByBatch" parameterType="ArrayList">
+        insert into sys_schoolinfor(id,fkCode,setup_time,school_english_ame,valid_start_time,school_area,create_time,school_profile,school_name,city_code,edu_bureau_fkcode,del_status,school_image,province_code,school_latlng,update_time,district_code,school_address,school_motto,school_fax,valid_end_time,school_tel,school_postcode,school_nature) values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.id},#{item.fkCode},#{item.setupTime},#{item.schoolEnglishAme},#{item.validStartTime},#{item.schoolArea},#{item.createTime},#{item.schoolProfile},#{item.schoolName},#{item.cityCode},#{item.eduBureauFkcode},#{item.delStatus},#{item.schoolImage},#{item.provinceCode},#{item.schoolLatlng},#{item.updateTime},#{item.districtCode},#{item.schoolAddress},#{item.schoolMotto},#{item.schoolFax},#{item.validEndTime},#{item.schoolTel},#{item.schoolPostcode},#{item.schoolNature})
+        </foreach>
+    </insert>
+
+    <!-- 通过SysSchoolinfor的id将数据库表中对应的数据删除-->
+    <delete id="deleteSysSchoolinforById" parameterType="java.lang.Long">
+        delete from sys_schoolinfor
+        where id = #{id}
+    </delete>
+
+    <!-- 通过辅助工具Assist中的条件将SysSchoolinfor对应的数据库表的数据删除-->
+    <delete id="deleteSysSchoolinfor" parameterType="com.gaozhao.app_common.util.Assist">
+        delete from sys_schoolinfor
+        <if test="require!=null"><include refid="Assist" /></if>
+    </delete>
+
+    <!-- 通过SysSchoolinfor的id将SysSchoolinfor的数据更新到数据库中对应的表,包括值null的数据-->
+    <update id="updateSysSchoolinforById" parameterType="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor">
+        update sys_schoolinfor set
+            fkCode=#{fkCode}
+            ,setup_time=#{setupTime}
+            ,school_english_ame=#{schoolEnglishAme}
+            ,valid_start_time=#{validStartTime}
+            ,school_area=#{schoolArea}
+            ,create_time=#{createTime}
+            ,school_profile=#{schoolProfile}
+            ,school_name=#{schoolName}
+            ,city_code=#{cityCode}
+            ,edu_bureau_fkcode=#{eduBureauFkcode}
+            ,del_status=#{delStatus}
+            ,school_image=#{schoolImage}
+            ,province_code=#{provinceCode}
+            ,school_latlng=#{schoolLatlng}
+            ,update_time=#{updateTime}
+            ,district_code=#{districtCode}
+            ,school_address=#{schoolAddress}
+            ,school_motto=#{schoolMotto}
+            ,school_fax=#{schoolFax}
+            ,valid_end_time=#{validEndTime}
+            ,school_tel=#{schoolTel}
+            ,school_postcode=#{schoolPostcode}
+            ,school_nature=#{schoolNature}
+        where id=#{id}
+    </update>
+
+    <!-- 通过SysSchoolinfor的id将SysSchoolinfor中属性值不为null的数据更新到数据库对应的表中-->
+    <update id="updateNonEmptySysSchoolinforById" parameterType="com.gaozhao.sys_manage.pojo.domain.SysSchoolinfor">
+        update sys_schoolinfor
+        <set>
+            <if test="fkCode != null">
+                fkCode=#{fkCode},
+            </if>
+            <if test="setupTime != null">
+                setup_time=#{setupTime},
+            </if>
+            <if test="schoolEnglishAme != null">
+                school_english_ame=#{schoolEnglishAme},
+            </if>
+            <if test="validStartTime != null">
+                valid_start_time=#{validStartTime},
+            </if>
+            <if test="schoolArea != null">
+                school_area=#{schoolArea},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime},
+            </if>
+            <if test="schoolProfile != null">
+                school_profile=#{schoolProfile},
+            </if>
+            <if test="schoolName != null">
+                school_name=#{schoolName},
+            </if>
+            <if test="cityCode != null">
+                city_code=#{cityCode},
+            </if>
+            <if test="eduBureauFkcode != null">
+                edu_bureau_fkcode=#{eduBureauFkcode},
+            </if>
+            <if test="delStatus != null">
+                del_status=#{delStatus},
+            </if>
+            <if test="schoolImage != null">
+                school_image=#{schoolImage},
+            </if>
+            <if test="provinceCode != null">
+                province_code=#{provinceCode},
+            </if>
+            <if test="schoolLatlng != null">
+                school_latlng=#{schoolLatlng},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+            <if test="districtCode != null">
+                district_code=#{districtCode},
+            </if>
+            <if test="schoolAddress != null">
+                school_address=#{schoolAddress},
+            </if>
+            <if test="schoolMotto != null">
+                school_motto=#{schoolMotto},
+            </if>
+            <if test="schoolFax != null">
+                school_fax=#{schoolFax},
+            </if>
+            <if test="validEndTime != null">
+                valid_end_time=#{validEndTime},
+            </if>
+            <if test="schoolTel != null">
+                school_tel=#{schoolTel},
+            </if>
+            <if test="schoolPostcode != null">
+                school_postcode=#{schoolPostcode},
+            </if>
+            <if test="schoolNature != null">
+                school_nature=#{schoolNature},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 通过辅助工具Assist中的条件将SysSchoolinfor中的数据更新到数据库对应的表中,包括值为null的数据-->
+    <update id="updateSysSchoolinfor" parameterType="map">
+        update sys_schoolinfor
+        <set>
+                id=#{enti.id},
+                fkCode=#{enti.fkCode},
+                setup_time=#{enti.setupTime},
+                school_english_ame=#{enti.schoolEnglishAme},
+                valid_start_time=#{enti.validStartTime},
+                school_area=#{enti.schoolArea},
+                create_time=#{enti.createTime},
+                school_profile=#{enti.schoolProfile},
+                school_name=#{enti.schoolName},
+                city_code=#{enti.cityCode},
+                edu_bureau_fkcode=#{enti.eduBureauFkcode},
+                del_status=#{enti.delStatus},
+                school_image=#{enti.schoolImage},
+                province_code=#{enti.provinceCode},
+                school_latlng=#{enti.schoolLatlng},
+                update_time=#{enti.updateTime},
+                district_code=#{enti.districtCode},
+                school_address=#{enti.schoolAddress},
+                school_motto=#{enti.schoolMotto},
+                school_fax=#{enti.schoolFax},
+                valid_end_time=#{enti.validEndTime},
+                school_tel=#{enti.schoolTel},
+                school_postcode=#{enti.schoolPostcode},
+                school_nature=#{enti.schoolNature},
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <!-- 通过辅助工具Assist中的条件将SysSchoolinfor中属性值不为null的数据更新到数据库对应的表中-->
+    <update id="updateNonEmptySysSchoolinfor" parameterType="map">
+        update sys_schoolinfor
+        <set>
+            <if test="enti.id != null">
+                id=#{enti.id},
+            </if>
+            <if test="enti.fkCode != null">
+                fkCode=#{enti.fkCode},
+            </if>
+            <if test="enti.setupTime != null">
+                setup_time=#{enti.setupTime},
+            </if>
+            <if test="enti.schoolEnglishAme != null">
+                school_english_ame=#{enti.schoolEnglishAme},
+            </if>
+            <if test="enti.validStartTime != null">
+                valid_start_time=#{enti.validStartTime},
+            </if>
+            <if test="enti.schoolArea != null">
+                school_area=#{enti.schoolArea},
+            </if>
+            <if test="enti.createTime != null">
+                create_time=#{enti.createTime},
+            </if>
+            <if test="enti.schoolProfile != null">
+                school_profile=#{enti.schoolProfile},
+            </if>
+            <if test="enti.schoolName != null">
+                school_name=#{enti.schoolName},
+            </if>
+            <if test="enti.cityCode != null">
+                city_code=#{enti.cityCode},
+            </if>
+            <if test="enti.eduBureauFkcode != null">
+                edu_bureau_fkcode=#{enti.eduBureauFkcode},
+            </if>
+            <if test="enti.delStatus != null">
+                del_status=#{enti.delStatus},
+            </if>
+            <if test="enti.schoolImage != null">
+                school_image=#{enti.schoolImage},
+            </if>
+            <if test="enti.provinceCode != null">
+                province_code=#{enti.provinceCode},
+            </if>
+            <if test="enti.schoolLatlng != null">
+                school_latlng=#{enti.schoolLatlng},
+            </if>
+            <if test="enti.updateTime != null">
+                update_time=#{enti.updateTime},
+            </if>
+            <if test="enti.districtCode != null">
+                district_code=#{enti.districtCode},
+            </if>
+            <if test="enti.schoolAddress != null">
+                school_address=#{enti.schoolAddress},
+            </if>
+            <if test="enti.schoolMotto != null">
+                school_motto=#{enti.schoolMotto},
+            </if>
+            <if test="enti.schoolFax != null">
+                school_fax=#{enti.schoolFax},
+            </if>
+            <if test="enti.validEndTime != null">
+                valid_end_time=#{enti.validEndTime},
+            </if>
+            <if test="enti.schoolTel != null">
+                school_tel=#{enti.schoolTel},
+            </if>
+            <if test="enti.schoolPostcode != null">
+                school_postcode=#{enti.schoolPostcode},
+            </if>
+            <if test="enti.schoolNature != null">
+                school_nature=#{enti.schoolNature},
+            </if>
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+</mapper>
